@@ -1,0 +1,811 @@
+ <!DOCTYPE html>
+
+<html lang="ru">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Belita-Vitex — помощник по уходу за кожей</title>
+
+<style>
+
+* { box-sizing: border-box; }
+
+body {
+
+  margin: 0;
+
+  font-family: Arial, sans-serif;
+
+  background: #f5f2ef;
+
+  color: #302d2b;
+
+  min-height: 100vh;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  padding: 18px;
+
+}
+
+.app {
+
+  width: 100%;
+
+  max-width: 520px;
+
+  background: white;
+
+  border-radius: 22px;
+
+  overflow: hidden;
+
+  box-shadow: 0 12px 40px #4c38251a;
+
+}
+
+.header {
+
+  background: #6f806b;
+
+  color: white;
+
+  padding: 25px 22px;
+
+  text-align: center;
+
+}
+
+.header h1 {
+
+  margin: 0 0 8px;
+
+  font-size: 23px;
+
+  letter-spacing: 1px;
+
+}
+
+.header p { margin: 0; font-size: 13px; opacity: .9; }
+
+.content { padding: 24px 21px; }
+
+.progress {
+
+  height: 6px;
+
+  background: #e9e8e4;
+
+  border-radius: 10px;
+
+  margin-bottom: 22px;
+
+  overflow: hidden;
+
+}
+
+.progress-bar {
+
+  height: 100%;
+
+  width: 0;
+
+  background: #82947b;
+
+  transition: width .2s;
+
+}
+
+.step { color: #899184; font-size: 12px; margin-bottom: 10px; }
+
+h2 { font-size: 20px; line-height: 1.35; margin: 0 0 18px; }
+
+.description {
+
+  color: #77736e;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+
+  margin-bottom: 18px;
+
+}
+
+.option {
+
+  display: block;
+
+  width: 100%;
+
+  border: 1px solid #e4e1dc;
+
+  background: #fff;
+
+  border-radius: 12px;
+
+  padding: 14px;
+
+  text-align: left;
+
+  font-size: 14px;
+
+  margin: 9px 0;
+
+  cursor: pointer;
+
+  color: #383430;
+
+  transition: .15s;
+
+}
+
+.option:hover { border-color: #82947b; background: #f7f9f5; }
+
+.option.selected {
+
+  border: 2px solid #71866b;
+
+  background: #f1f5ef;
+
+  padding: 13px;
+
+}
+
+.actions { display: flex; gap: 10px; margin-top: 22px; }
+
+button.primary, button.secondary, button.option {
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+
+  border: 0;
+
+  border-radius: 12px;
+
+  padding: 14px 18px;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+}
+
+.primary {
+
+  background: #71866b;
+
+  color: white;
+
+  flex: 1;
+
+}
+
+.primary:disabled { opacity: .4; cursor: not-allowed; }
+
+.secondary { background: #efede9; color: #514d48; }
+
+.result {
+
+  background: #f4f6f1;
+
+  border-radius: 15px;
+
+  padding: 18px;
+
+  margin: 15px 0;
+
+}
+
+.result h3 { margin: 0 0 10px; color: #586d52; }
+
+.result p, .result li { font-size: 14px; line-height: 1.55; }
+
+.result ul { padding-left: 20px; }
+
+.note {
+
+  font-size: 12px;
+
+  color: #77736e;
+
+  line-height: 1.5;
+
+  margin-top: 18px;
+
+}
+
+.hidden { display: none; }
+
+.footer {
+
+  text-align: center;
+
+  padding: 14px;
+
+  font-size: 11px;
+
+  color: #918c85;
+
+  border-top: 1px solid #f0eeeb;
+
+}
+
+@media (max-width: 400px) {
+
+  .content { padding: 20px 16px; }
+
+  h2 { font-size: 18px; }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+  <header class="header">
+
+    <h1>BELITA-VITEX</h1>
+
+    <p>Персональный помощник по уходу за кожей</p>
+
+  </header>
+
+  <main class="content">
+
+    <div id="intro">
+
+      <h2>Давайте подберём базовый уход!</h2>
+
+      <p class="description">
+
+        Ответьте на несколько вопросов о состоянии вашей кожи.
+
+        В конце вы получите предварительное определение типа кожи
+
+        и общие рекомендации по уходу.
+
+      </p>
+
+      <div class="result">
+
+        <h3>Как это работает?</h3>
+
+        <p>Бот анализирует ваши ответы и определяет, какие признаки
+
+        встречаются чаще: сухость, жирность, комбинированность
+
+        или нормальное состояние кожи.</p>
+
+      </div>
+
+      <p class="note">
+
+        Тест носит информационный характер и не заменяет консультацию
+
+        дерматолога или косметолога.
+
+      </p>
+
+      <button type="button" class="primary" onclick="startTest()">Начать тест</button>
+
+    </div>
+
+    <div id="quiz" class="hidden">
+
+      <div class="progress"><div class="progress-bar" id="bar"></div></div>
+
+      <div class="step" id="step"></div>
+
+      <h2 id="question"></h2>
+
+      <p class="description" id="hint"></p>
+
+      <div id="options"></div>
+
+      <div class="actions">
+
+        <button type="button" class="secondary" onclick="goBack()" id="back">Назад</button>
+<button type="button" class="primary" onclick="nextQuestion()" id="next" disabled>Далее</button>
+
+      </div>
+
+    </div>
+
+    <div id="resultScreen" class="hidden">
+
+      <h2>Результат теста</h2>
+
+      <div id="resultContent"></div>
+
+      <button type="button" class="primary" onclick="restart()">Пройти тест заново</button>
+
+      <p class="note">
+
+        Рекомендации являются общими. Реакция кожи индивидуальна.
+
+        При стойком раздражении, воспалении или выраженном дискомфорте
+
+        обратитесь к специалисту.
+
+      </p>
+
+    </div>
+
+  </main>
+
+  <footer class="footer">Информационный прототип • Belita-Vitex</footer>
+
+</div>
+
+<script>
+"use strict";
+
+const questions = [
+
+  {
+
+    title: "1. Что вы чувствуете через 10–15 минут после умывания?",
+
+    hint: "Оцените ощущения, если не наносить крем сразу после очищения.",
+
+    options: [
+
+      ["Кожа стянута, иногда появляется шелушение", "dry"],
+
+      ["Кожа комфортная, без выраженных ощущений", "normal"],
+
+      ["Быстро появляется жирный блеск", "oily"],
+
+      ["Стянутость на щеках, но жирность в Т-зоне", "combination"]
+
+    ]
+
+  },
+
+  {
+
+    title: "2. Как обычно выглядит кожа к середине дня?",
+
+    hint: "Вспомните обычный день без необычной жары или интенсивной тренировки.",
+
+    options: [
+
+      ["Матовая, может выглядеть сухой", "dry"],
+
+      ["В целом комфортная, без сильного блеска", "normal"],
+
+      ["Заметно блестит почти всё лицо", "oily"],
+
+      ["Блестят лоб, нос и подбородок, щёки остаются матовыми", "combination"]
+
+    ]
+
+  },
+
+  {
+
+    title: "3. Какие поры вы чаще всего замечаете?",
+
+    hint: "Ориентируйтесь на обычное состояние кожи, а не на один отдельный день.",
+
+    options: [
+
+      ["Малозаметные, кожа иногда шелушится", "dry"],
+
+      ["Небольшие и почти незаметные", "normal"],
+
+      ["Заметные на большей части лица", "oily"],
+
+      ["Заметные преимущественно на носу и лбу", "combination"]
+
+    ]
+
+  },
+
+  {
+
+    title: "4. Чем отличаются разные участки лица?",
+
+    hint: "Т-зона — лоб, нос и подбородок.",
+
+    options: [
+
+      ["Почти всё лицо склонно к сухости", "dry"],
+
+      ["Существенной разницы между участками нет", "normal"],
+
+      ["Почти всё лицо склонно к жирности", "oily"],
+
+      ["Т-зона жирнее, а щёки нормальные или сухие", "combination"]
+
+    ]
+
+  },
+
+  {
+
+    title: "5. Как часто возникают сухость или жирный блеск?",
+
+    hint: "Выберите вариант, который лучше описывает вашу кожу в большинстве дней.",
+
+    options: [
+
+      ["Часто ощущаю сухость и недостаток комфорта", "dry"],
+
+      ["Редко замечаю сухость или выраженный блеск", "normal"],
+
+      ["Жирный блеск появляется часто", "oily"],
+
+      ["Одновременно бывают сухие участки и жирная Т-зона", "combination"]
+
+    ]
+
+  },
+
+  {
+
+    title: "6. Насколько ваша кожа чувствительна?",
+
+    hint: "Этот вопрос оценивается отдельно и не меняет определённый тип кожи.",
+
+    options: [
+
+      ["Часто краснеет или реагирует на новые средства", "sensitive"],
+
+      ["Иногда возникает раздражение или дискомфорт", "sometimes"],
+
+      ["Обычно хорошо переносит косметические средства", "notSensitive"]
+
+    ]
+
+  }
+
+];
+
+let current = 0;
+
+let answers = [];
+
+function startTest() {
+
+  answers = [];
+
+  current = 0;
+
+  document.getElementById("intro").classList.add("hidden");
+
+  document.getElementById("resultScreen").classList.add("hidden");
+
+  document.getElementById("quiz").classList.remove("hidden");
+
+  renderQuestion();
+
+}
+
+function renderQuestion() {
+
+  const q = questions[current];
+
+  document.getElementById("step").textContent =
+
+    "Вопрос " + (current + 1) + " из " + questions.length;
+
+  document.getElementById("bar").style.width =
+
+    ((current + 1) / questions.length * 100) + "%";
+
+  document.getElementById("question").textContent = q.title;
+
+  document.getElementById("hint").textContent = q.hint;
+
+  const options = document.getElementById("options");
+
+  options.innerHTML = "";
+
+  q.options.forEach((option, index) => {
+
+    const button = document.createElement("button");
+
+    button.className = "option";
+
+    button.textContent = option[0];
+
+    if (answers[current] === option[1]) button.classList.add("selected");
+
+    button.onclick = () => {
+
+      answers[current] = option[1];
+
+      renderQuestion();
+
+    };
+
+    options.appendChild(button);
+
+  });
+
+  document.getElementById("back").style.visibility =
+
+    current === 0 ? "hidden" : "visible";
+
+  document.getElementById("next").disabled = !answers[current];
+
+  document.getElementById("next").textContent =
+
+    current === questions.length - 1 ? "Узнать результат" : "Далее";
+
+}
+
+function nextQuestion() {
+
+  if (!answers[current]) return;
+
+  if (current < questions.length - 1) {
+
+    current++;
+
+    renderQuestion();
+
+  } else {
+
+    showResult();
+
+  }
+
+}
+
+function goBack() {
+
+  if (current > 0) {
+
+    current--;
+
+    renderQuestion();
+
+  }
+
+}
+
+function showResult() {
+
+  const types = ["dry", "oily", "combination", "normal"];
+
+  const scores = { dry: 0, oily: 0, combination: 0, normal: 0 };
+
+  answers.slice(0, 5).forEach(answer => {
+
+    if (scores[answer] !== undefined) scores[answer]++;
+
+  });
+
+  const maxScore = Math.max(...types.map(type => scores[type]));
+
+  const winners = types.filter(type => scores[type] === maxScore);
+
+  let type;
+
+  if (winners.length === 1) {
+
+    type = winners[0];
+
+  } else if (winners.includes("combination")) {
+
+    type = "combination";
+
+  } else {
+
+    type = "mixed";
+
+  }
+
+  const sensitivity = answers[5];
+
+  const names = {
+
+    dry: "Сухая кожа",
+
+    oily: "Жирная кожа",
+
+    combination: "Комбинированная кожа",
+
+    normal: "Нормальная кожа",
+
+    mixed: "Смешанные признаки"
+
+  };
+
+  const descriptions = {
+
+    dry: "Кожа чаще испытывает недостаток комфорта, может ощущаться стянутость и появляться шелушение.",
+
+    oily: "Кожа склонна к выраженному блеску и более заметным порам.",
+
+    combination: "Для разных участков лица характерны разные состояния: Т-зона может быть жирнее, а щёки — нормальными или сухими.",
+
+    normal: "По вашим ответам выраженная сухость и жирность проявляются редко.",
+
+    mixed: "Ответы распределились неоднозначно. Возможно, у кожи смешанные признаки или её состояние меняется."
+
+  };
+
+  const care = {
+
+    dry: [
+
+      "Используйте мягкое очищение без ощущения стянутости.",
+
+      "Выбирайте увлажняющий крем с комфортной для вас текстурой.",
+
+      "Не злоупотребляйте скрабами и частым отшелушиванием."
+
+    ],
+
+    oily: [
+
+      "Очищайте кожу мягким средством, не пытайтесь пересушить её.",
+
+      "Выбирайте лёгкий увлажняющий крем.",
+
+      "Избегайте слишком частого умывания и агрессивного очищения."
+
+    ],
+
+    combination: [
+
+      "Используйте мягкое средство для очищения всего лица.",
+
+      "Подбирайте увлажнение с учётом разных участков лица.",
+
+      "При необходимости наносите более лёгкие средства на Т-зону."
+
+    ],
+
+    normal: [
+
+      "Поддерживайте регулярное мягкое очищение.",
+
+      "Используйте увлажняющий крем по ощущениям кожи.",
+
+      "Не вводите много новых средств одновременно."
+
+    ],
+
+    mixed: [
+
+      "Начните с мягкого очищения и базового увлажнения.",
+
+      "Наблюдайте за состоянием разных участков лица.",
+
+      "Повторите тест в обычных условиях через некоторое время."
+
+    ]
+
+  };
+
+  let sensitivityText = "";
+
+  if (sensitivity === "sensitive") {
+
+    sensitivityText = "Вы отметили частую чувствительность. Вводите новые средства постепенно, проверяйте реакцию кожи и отдавайте предпочтение мягкому уходу.";
+
+  } else if (sensitivity === "sometimes") {
+
+    sensitivityText = "Вы отметили периодическую чувствительность. Наблюдайте за реакцией кожи при использовании новых средств.";
+
+  } else {
+
+    sensitivityText = "По вашим ответам выраженная чувствительность обычно не проявляется. Тем не менее следите за индивидуальной реакцией.";
+
+  }
+
+  const content = document.getElementById("resultContent");
+
+  content.innerHTML = "";
+
+  const box = document.createElement("div");
+
+  box.className = "result";
+
+  const title = document.createElement("h3");
+
+  title.textContent = names[type];
+
+  box.appendChild(title);
+
+  const description = document.createElement("p");
+
+  description.textContent = descriptions[type];
+
+  box.appendChild(description);
+const subtitle = document.createElement("h3");
+
+  subtitle.textContent = "Базовые рекомендации";
+
+  box.appendChild(subtitle);
+
+  const list = document.createElement("ul");
+
+  care[type].forEach(item => {
+
+    const li = document.createElement("li");
+
+    li.textContent = item;
+
+    list.appendChild(li);
+
+  });
+
+  const sunscreen = document.createElement("li");
+
+  sunscreen.textContent = "В дневное время используйте солнцезащитное средство SPF 30 или выше.";
+
+  list.appendChild(sunscreen);
+
+  box.appendChild(list);
+
+  const sensitivityTitle = document.createElement("h3");
+
+  sensitivityTitle.textContent = "Чувствительность кожи";
+
+  box.appendChild(sensitivityTitle);
+
+  const sensitivityParagraph = document.createElement("p");
+
+  sensitivityParagraph.textContent = sensitivityText;
+
+  box.appendChild(sensitivityParagraph);
+
+  content.appendChild(box);
+
+  const scoreText = document.createElement("p");
+
+  scoreText.className = "note";
+
+  scoreText.textContent = "Распределение ответов: сухая — " + scores.dry +
+
+    ", жирная — " + scores.oily +
+
+    ", комбинированная — " + scores.combination +
+
+    ", нормальная — " + scores.normal + ".";
+
+  content.appendChild(scoreText);
+
+  document.getElementById("quiz").classList.add("hidden");
+
+  document.getElementById("resultScreen").classList.remove("hidden");
+
+}
+
+function restart() {
+
+  document.getElementById("resultScreen").classList.add("hidden");
+
+  document.getElementById("intro").classList.remove("hidden");
+
+  answers = [];
+
+  current = 0;
+
+}
+
+</script>
+
+</body>
+
+</html>
